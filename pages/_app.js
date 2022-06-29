@@ -102,7 +102,6 @@ function MyApp({ Component, pageProps }) {
     }
   }
 
-
   const getBriefDetails = async (username) => {
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/user/getuserbrief`, {
       method: 'POST',

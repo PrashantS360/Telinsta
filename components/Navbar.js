@@ -75,7 +75,7 @@ const Navbar = () => {
         <div className=" m-auto border-b-2 fixed top-0 w-full z-20 bg-white">
             <main className='md:w-[90%] lg:w-[80%] max-w-[1400px] md:m-auto px-6 md:px-0 flex space-y-2 sm:space-y-0 flex-col sm:flex-row justify-between items-center py-3 '>
                 <div className="logo">
-                    <Link href={'/'} ><a className='font-mono text-2xl font-semibold'>Telinsta</a></Link>
+                    <Link href={'/'} ><a className=' text-[2rem] font-semibold appname'>Telinsta</a></Link>
                 </div>
                 <div className="searchBar sm:block hidden">
                     <div>

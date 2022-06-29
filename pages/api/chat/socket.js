@@ -1,4 +1,4 @@
-import { Server } from 'Socket.IO'
+import { Server } from 'socket.io'
 import Chat from '../../../models/Chat'
 
 const SocketHandler = (req, res) => {

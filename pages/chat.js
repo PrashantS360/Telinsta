@@ -4,7 +4,7 @@ import { BiArrowBack } from 'react-icons/bi';
 import { BsFillEyeFill } from 'react-icons/bs';
 import { FiSend } from 'react-icons/fi';
 import { FcSearch } from 'react-icons/fc';
-import io from 'Socket.IO-client';
+import io from 'socket.io-client';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -98,7 +98,6 @@ const Chat = ({ user, getBriefDetails }) => {
           // Update Chats Orders
           let newOrder = chats;
           let idx = chats.findIndex((obj) => { return obj._id === room });
-          console.log(idx);
           for (let i = idx; i > 0; i--) {
             [newOrder[i], newOrder[i - 1]] = [newOrder[i - 1], newOrder[i]];
           }
@@ -120,7 +119,6 @@ const Chat = ({ user, getBriefDetails }) => {
     // Update Chats Orders
     let newOrder = chats;
     let idx = chats.findIndex((obj) => { return obj._id === room });
-    console.log(idx);
     for (let i = idx; i > 0; i--) {
       [newOrder[i], newOrder[i - 1]] = [newOrder[i - 1], newOrder[i]];
     }

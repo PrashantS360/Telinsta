@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&family=Imperial+Script&family=Island+Moments&family=Macondo&family=Moon+Dance&family=Oooh+Baby&family=Smooch&family=Vujahday+Script&display=swap');
+
 body{
     scroll-behavior: smooth;
 }
@@ -20,4 +22,9 @@ body{
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+
+.appname{
+    font-family: 'Smooch', cursive;
 }
