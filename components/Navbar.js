@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { AiOutlineHome, AiTwotoneHome } from 'react-icons/ai';
 import { IoIosSearch } from 'react-icons/io';
 import { RiAccountCircleLine, RiAccountCircleFill } from 'react-icons/ri';
-import { BsChatLeftText, BsChatLeftTextFill, BsPlusSquare, BsPlusSquareFill, BsHeart, BsHeartFill, BsSave2, BsSave2Fill ,BsArrow90DegRight} from 'react-icons/bs';
+import { BsChatLeftText, BsChatLeftTextFill, BsPlusSquare, BsPlusSquareFill, BsHeart, BsHeartFill, BsSave2, BsSave2Fill, BsArrow90DegRight } from 'react-icons/bs';
 import Link from 'next/link';
+import Image from 'next/image';
 
 
 const Navbar = () => {
@@ -40,7 +41,7 @@ const Navbar = () => {
             }
             console.log(response);
         }
-        else{
+        else {
             setResults([]);
         }
     }
@@ -80,14 +81,16 @@ const Navbar = () => {
                     <div>
                         <button disabled className='relative top-0.5 left-6 text-gray-500 '><IoIosSearch /></button>
                         <input type="text" name="search" id="search" className='border-2 bg-gray-100 py-1.5 rounded-md px-5 outline-none min-w-[21vw] pl-7' placeholder='Search' value={search} onChange={findMatchingResults} />
-                        {results.length>0 && <div className="absolute bg-gray-50 shadow-md overflow-auto max-h-[50vh] min-w-[23vw] px-3 py-1">
+                        {results.length > 0 && <div className="absolute bg-gray-50 shadow-md overflow-auto max-h-[50vh] min-w-[23vw] px-3 py-1">
                             <ul>
                                 {results.map((user) => {
-                                    return <li key={user.username}>
-                                        <div className="flex w-full items-center text-sm justify-between my-3.5">
+                                    return <div key={user.username}>
+                                        <div className="flex w-full items-center text-sm justify-between hover:bg-gray-200 p-4 rounded-md">
                                             <Link href={`/users/${user.username}`}>
                                                 <a className='flex items-center space-x-2' >
-                                                    <img src="https://toppng.com/uploads/preview/nasa-logo-vector-11574071804ocpy5ybux0.png" className="w-10 cursor-pointer rounded-full object-center" alt="" />
+                                                    <Image src={user.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                                                        return `${src}?w=${width}&q=${quality || 75}`
+                                                    }} height={35} width={35} />
                                                     <div className='cursor-pointer'>
                                                         <p className='text-sm'>{user.username}</p>
                                                         <p className='text-xs'>{user.name}</p>
@@ -96,7 +99,7 @@ const Navbar = () => {
                                             </Link>
                                             <Link href={`/users/${user.username}`}><a className='text-xs rounded-md text-blue-500 py-1.5 px-3 hover:text-white hover:bg-blue-500'><BsArrow90DegRight /></a></Link>
                                         </div>
-                                    </li>
+                                    </div>
                                 })}
 
                             </ul>

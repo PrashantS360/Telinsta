@@ -6,6 +6,7 @@ import { FiSend } from 'react-icons/fi';
 import { FcSearch } from 'react-icons/fc';
 import io from 'Socket.IO-client';
 import Head from 'next/head';
+import Image from 'next/image';
 import Link from 'next/link';
 import InputEmoji from "react-input-emoji";
 import { useRouter } from 'next/router';
@@ -23,7 +24,13 @@ const Chat = ({ user, getBriefDetails }) => {
   const [room, setRoom] = useState("");
 
   useEffect(() => {
-    socketInitializer();
+    if (!localStorage.getItem('token')){
+      router.push('/login');
+    }
+    else{
+      socketInitializer();
+    }
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -157,7 +164,9 @@ const Chat = ({ user, getBriefDetails }) => {
             {chats.map((chat) => {
               return <div key={chat._id} onClick={() => { settingRoom(chat) }} className={`flex ${chat.users.includes(selectedChat.username) ? 'bg-gray-100' : 'hover:bg-gray-50'} cursor-pointer max-w-[360px] py-3 px-5 items-center text-sm `}>
                 <div className='flex items-center space-x-2 cursor-pointer'>
-                  <img src={chat.profilepic} className="w-14 cursor-pointer rounded-full object-center" alt="" />
+                  <Image src={chat.profilepic ? chat.profilepic : "/user.png"} className="w-14 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                    return `${src}?w=${width}&q=${quality || 75}`
+                  }} height={40} width={40} />
                   <div>
                     <p className='font-semibold uppercase'>{chat.name}</p>
                     <p className='font-light text-sm'>{chat.users[0] === user.username ? chat.users[1] : chat.users[0]}</p>
@@ -182,8 +191,10 @@ const Chat = ({ user, getBriefDetails }) => {
             <div className='font-semibold text-lg border-b-2 h-[9.7vh] flex px-3 items-center justify-between'>
               <div className='flex items-center'>
                 <BiArrowBack className='mr-5 cursor-pointer' onClick={() => { setSelectedChat({ name: "", username: "", profilepic: "" }) }} />
-                <div className='hover:bg-gray-50'><a className='flex uppercase'>
-                  <img src={selectedChat.profilepic} className="w-8 cursor-pointer rounded-full object-center mr-3" alt="" />{selectedChat.username}</a></div>
+                <div className='hover:bg-gray-50'><a className='flex uppercase  items-center'>
+                  <Image src={selectedChat.profilepic} className="w-8 cursor-pointer rounded-full object-center mr-3" alt="" loader={({ src, width, quality }) => {
+                    return `${src}?w=${width}&q=${quality || 75}`
+                  }} height={35} width={35} /><span className='px-2'>{selectedChat.username}</span> </a></div>
               </div>
               <Link href={`/users/${selectedChat.username}`}><a className=' rounded-md text-blue-500 py-1 px-3 hover:text-white hover:bg-blue-500'><BsFillEyeFill /></a></Link>
             </div>

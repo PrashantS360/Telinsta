@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Head from 'next/head';
+import Image from 'next/image';
 import Script from 'next/script';
 import React, { useState, useEffect } from 'react';
 import { BsBookmark, BsHeart, BsHeartFill, BsFacebook, BsCheckLg, BsFillBookmarkStarFill, BsArrow90DegRight } from 'react-icons/bs'
@@ -11,10 +12,15 @@ import { FacebookProvider, Comments } from 'react-facebook';
 import mongoose from 'mongoose'
 import Post from '../models/Post'
 import Slider from '../components/Slider';
+import { useRouter } from 'next/router';
 
 const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
   const [suggestions, setSuggestions] = useState([]);
+  const router= useRouter();
   useEffect(() => {
+    if(!localStorage.getItem('token')){
+      router.push('/login')
+    }
     getSuggestions();
     getOwnerDetails();
   }, [user])
@@ -22,12 +28,14 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
   const [like, setLike] = useState("");
   const [save, setSave] = useState("");
 
+  const [key, setKey] = useState(0);
   const getOwnerDetails = async () => {
-    for (let post of posts){
+    for (let post of posts) {
       let obj = await getBriefDetails(post.username);
       post.profilepic = obj.profilepic;
       post.name = obj.name;
     }
+    setKey(Math.random());
   }
 
   const [copied, setCopied] = useState(false);
@@ -73,7 +81,9 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
               <div className="account py-2 px-3 flex justify-between items-center  border-b-2">
                 <Link href={`/users/${post.username}`}>
                   <a className="flex text-sm items-center space-x-2">
-                    <img src={post.profilepic} className="w-12 rounded-full object-center cursor-pointer" alt="" />
+                    <Image key={key} src={post.profilepic ? post.profilepic : "/user.png"} alt="" className="w-12 rounded-full object-center cursor-pointer" loader={({ src, width, quality }) => {
+                      return `${src}?w=${width}&q=${quality || 75}`
+                    }} height={40} width={40} />
                     <div>
                       <p className='text-sm'>{post.username}</p>
                       <p className='text-xs text-gray-500'>{post.name}</p>
@@ -128,10 +138,12 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
         <div className="suggestions px-4 py-3 left-[64%] top-24 fixed hidden sm:block w-1/3">
           <div className="flex max-w-[360px] border-b-2 pb-3 items-center text-sm justify-between mb-3">
             <div className='flex items-center space-x-2'>
-              <img src="/user.png" className="w-14 cursor-pointer rounded-full object-center" alt="" />
+              <Image src={user.profilepic?user.profilepic:"/user.png"} className="w-14 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                      return `${src}?w=${width}&q=${quality || 75}`
+                    }} height={45} width={45}/>
               <div>
                 <p className='text-sm'>{user.username}</p>
-                <p className='text-xs'>{user.name}</p>
+                <p className='text-xs text-gray-600'>{user.name}</p>
               </div>
             </div>
             {user.username.length !== 0 && <button className='text-xs rounded-md text-blue-500 py-1.5 px-3 hover:text-white hover:bg-blue-500' onClick={logout}>logout</button>}
@@ -141,10 +153,12 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
           {suggestions.map((item) => {
             return <div className="flex max-w-[360px] items-center text-sm justify-between my-3.5" key={item.username}>
               <div className='flex items-center space-x-2'>
-                <img src="/user.png" className="w-10 cursor-pointer rounded-full object-center" alt="" />
+                <Image src={item.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                      return `${src}?w=${width}&q=${quality || 75}`
+                    }} height={40} width={40}/>
                 <div>
                   <p className='text-sm'>{item.name}</p>
-                  <p className='text-xs'>{item.username}</p>
+                  <p className='text-xs text-gray-500'>{item.username}</p>
                 </div>
               </div>
               <Link href={`/users/${item.username}`}><a className='text-xs rounded-md text-blue-500 py-1.5 px-3 hover:text-white hover:bg-blue-500'><BsArrow90DegRight /></a></Link>

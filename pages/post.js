@@ -1,12 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ImageUploading from 'react-images-uploading';
 import { AiOutlinePlus, AiFillCloseCircle } from 'react-icons/ai';
 import { MdChangeCircle } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import Head from 'next/head';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 const Post = ({ user }) => {
+  const router = useRouter();
   const [loader, setLoader] = useState(false);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+    // eslint-disable-next-line
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,7 +123,10 @@ const Post = ({ user }) => {
                 <div className='flex flex-wrap justify-center'>
                   {imageList.map((image, index) => (
                     <div key={index} className="image-item m-2">
-                      <img src={image['data_url']} alt="selected image" className='w-24 h-24 border-[0.5px] border-gray-100 rounded-md' />
+                      <Image src={image['data_url']} alt="selected image" className='w-24 h-24 border-[0.5px] border-gray-100 rounded-md' loader={({ src, width, quality }) => {
+                        return `${src}?w=${width}&q=${quality || 75}`
+                      }
+                      } width={100} height={100}/>
                       <div className="image-item__btn-wrapper">
                         <button onClick={() => onImageUpdate(index)} className='relative -top-24 -right-16 bg-white rounded-full'><MdChangeCircle /></button>
                         <button onClick={() => onImageRemove(index)} className='relative -top-24 -right-16 bg-white rounded-full'><AiFillCloseCircle /></button>
@@ -126,7 +139,7 @@ const Post = ({ user }) => {
                     You can select {maxNumber - images.length} more image{images.length < 4 ? 's' : ''}
                   </span>
                   }
-                  {images.length === 5 && <span className='text-red-700 text-xs'> You can't select more than 5 images</span>}
+                  {images.length === 5 && <span className='text-red-700 text-xs'> You can not select more than 5 images</span>}
                 </div>}
               </div>
             )}
@@ -150,7 +163,7 @@ const Post = ({ user }) => {
         <div className="modal-dialog relative pointer-events-none w-fit"  >
           <div className="modal-content border-none shadow-lg relative flex flex-col  pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current ">
             <div className="modal-body relative overflow-auto max-h-[40vh] flex justify-center items-center">
-              <img src="loader.gif" alt="" className='w-[300px]' />
+              <Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
             </div>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Head from 'next/head';
+import Image from 'next/image';
 import Script from 'next/script';
 import React, { useState, useEffect } from 'react';
 import { BsBookmark, BsHeart, BsHeartFill, BsFacebook, BsCheckLg, BsFillBookmarkStarFill } from 'react-icons/bs'
@@ -14,9 +15,13 @@ import Slider from '../../components/Slider';
 const Getpost = ({ post, user, likePost, savePost, getBriefDetails }) => {
     const [like, setLike] = useState("");
     const [save, setSave] = useState("");
+    let router = useRouter();
 
     const [postOwner, setPostOwner] = useState({ username: "", name: "", profilepic: "", bio: "" });
     useEffect(() => {
+        if(!localStorage.getItem('token')){
+            router.push('/login');
+        }
         getOwnerDetails();
     }, [post])
 
@@ -26,7 +31,6 @@ const Getpost = ({ post, user, likePost, savePost, getBriefDetails }) => {
     }
 
 
-    let router = useRouter();
     useEffect(() => {
         router.push(`${process.env.NEXT_PUBLIC_HOST}/posts/${post._id}`)
     }, [like, save])
@@ -70,7 +74,9 @@ const Getpost = ({ post, user, likePost, savePost, getBriefDetails }) => {
                     <div className="account py-2 px-3 flex justify-between items-center  border-b-2">
                         <Link href={`/users/${post.username}`}>
                             <a className="flex text-sm items-center space-x-2">
-                                <img src={postOwner.profilepic} className="w-12 rounded-full object-center cursor-pointer" alt="" />
+                                <Image src={postOwner.profilepic.length>0?postOwner.profilepic:"/user.png"} alt="" className="w-12 rounded-full object-center cursor-pointer"  loader={({ src, width, quality }) => {
+                                    return `${src}?w=${width}&q=${quality || 75}`
+                                }} height={40} width={40} />
                                 <div>
                                     <p className='text-sm'>{post.username}</p>
                                     <p className='text-xs text-gray-500'>{postOwner.name}</p>

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Head from 'next/head'
+import Image from 'next/image'
 
 const Login = () => {
 
@@ -12,6 +13,7 @@ const Login = () => {
     if (localStorage.getItem('token')){
       router.push('/')      
     }
+    // eslint-disable-next-line
   }, [])
   
   const [username, setUsername] = useState("");
@@ -76,7 +78,7 @@ const Login = () => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <div className="min-h-[85vh] flex flex-col lg:flex-row items-center justify-center py-12 px-4 sm:px-6 lg:px-8 md:mt-16 mt-24 space-x-2 space-y-2 h-full">
-        <img src="/login.jpg" alt="" />
+      <Image src="/login.jpg" alt="" width={600} height={400} />
         <div className="max-w-md w-full space-y-8 border-2 p-8 rounded-md">
           <div>
             <h2 className=" text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>

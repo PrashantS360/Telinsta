@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
+import Image from 'next/image'
 import ImageUploading from 'react-images-uploading';
 import { AiOutlinePlus, AiFillCloseCircle } from 'react-icons/ai';
 import { MdChangeCircle } from 'react-icons/md';
@@ -8,15 +9,22 @@ import { FaEdit, FaRegWindowClose } from 'react-icons/fa'
 import { BsHeartFill } from 'react-icons/bs'
 import { HiOutlineEmojiSad } from 'react-icons/hi'
 import { toast } from 'react-toastify';
+import {useRouter} from 'next/router';
 
 const Account = ({ logout, getBriefDetails }) => {
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState({ name: "", email: "", phone: "", bio: "", username: "", followers: [], following: [], profilepic: "" });
+
+  const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       getUser();
     }
+    else{
+      router.push('/login');
+    }
+    // eslint-disable-next-line
   }, [])
 
   useEffect(() => {
@@ -282,13 +290,19 @@ const Account = ({ logout, getBriefDetails }) => {
       <main className='md:w-[75%] md:m-auto px-6 md:px-0 py-3 '>
         <div className="userdetails flex min-h-[40vh] items-center space-y-2 mb-3 border-b-2 pb-2">
           <div className="sm:flex hidden w-[40%] justify-end items-center mr-16">
-            <img src={user.profilepic} alt="profile picture" onClick={() => { setProfilePic(true) }} className='h-44 rounded-full cursor-pointer shadow-md' />
+            <Image src={user.profilepic.length > 0 ? user.profilepic : "/user.png"} alt="profile picture" onClick={() => { setProfilePic(true) }} className='h-44 rounded-full cursor-pointer shadow-md' loader={({ src, width, quality }) => {
+              return `${src}?w=${width}&q=${quality || 75}`
+            }} height={140} width={140} />
           </div>
           <div className="sm:w-[60%] w-full flex sm:block flex-col items-center">
             <h2 className="username flex items-center mb-2"><span className=' text-2xl font-semibold'>{user.username}</span><button className='mx-2 text-black py-1 px-3 hover:text-white hover:bg-gray-700 border-2 border-black rounded-md text-sm sm:block hidden' onClick={() => { setEditDetails(true) }}>Edit Profile</button><FaEdit className='mx-2 sm:hidden ' /> </h2>
             <div className="flex flex-col">
               <div className="flex">
-                <img src={user.profilepic} className="w-24 cursor-pointer rounded-full object-center mr-6 sm:hidden shadow-md" alt="" />
+                <div className='sm:hidden mr-2'>
+                  <Image src={user.profilepic.length > 0 ? user.profilepic : "/user.png"} className="w-24 cursor-pointer rounded-full object-center mr-6  shadow-md" alt="" loader={({ src, width, quality }) => {
+                    return `${src}?w=${width}&q=${quality || 75}`
+                  }} height={70} width={70} />
+                </div>
                 <div className="flex flex-col sm:flex-row justify-start ml-0.5 sm:space-x-11 mb-5">
                   <a href='#posts'> <span className="posts font-semibold">{posts.length}</span> posts</a>
                   <p className='cursor-pointer' onClick={() => { setFollowerModal(true) }}> <span className="followers font-semibold">{user.followers.length}</span> followers</p>
@@ -311,19 +325,21 @@ const Account = ({ logout, getBriefDetails }) => {
             {posts.map((post) => {
               return <Link href={`/posts/${post._id}`} key={post._id}>
                 <a className="border-[1px] m-2" >
-                  <img alt="gallery" className="w-28 h-28 object-cover object-center " src={post.imgLinks[0]} />
+                  <Image alt="gallery" className="w-28 h-28 object-cover object-center " src={post.imgLinks[0]} loader={({ src, width, quality }) => {
+                    return `${src}?w=${width}&q=${quality || 75}`
+                  }} height={90} width={90} />
                 </a>
               </Link>
             })}
           </div>}
           {posts.length === 0 && <div className='flex flex-col items-center justify-center h-full my-8'>
             <BsHeartFill className='xl:text-[5rem] text-[4rem] border-red-600 text-red-600 border-4 py-4 rounded-full' />
-            <h3 className='text-black text-xl font-semibold mt-1 mb-2'>You haven't posted anything yet.</h3>
+            <h3 className='text-black text-xl font-semibold mt-1 mb-2'>You have not posted anything yet.</h3>
             <Link href='/post'><a className='text-gray-700 hover:underline hover:text-blue-700 text-sm'>Click here to make your first post</a></Link>
           </div>}
 
           <div className="text-center my-3 mt-5">
-            <Link href={'/'}><a className='rounded-md text-xs text-gray-600 py-1.5 px-2 hover:text-white hover:bg-gray-700 border-2 border-black'>Explore Other's Posts</a></Link>
+            <Link href={'/'}><a className='rounded-md text-xs text-gray-600 py-1.5 px-2 hover:text-white hover:bg-gray-700 border-2 border-black'>Explore Other Posts</a></Link>
           </div>
         </div>
       </main>
@@ -349,7 +365,9 @@ const Account = ({ logout, getBriefDetails }) => {
                     <div className="flex w-full items-center text-sm justify-between my-3.5">
                       <Link href={`/users/${follow.username}`}>
                         <a className='flex items-center space-x-2' onClick={() => { setFollowingModal(false) }}>
-                          <img src={follow.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" />
+                          <Image src={follow.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                            return `${src}?w=${width}&q=${quality || 75}`
+                          }} height={35} width={35} />
                           <div className='cursor-pointer'>
                             <p className='text-sm'>{follow.username}</p>
                             <p className='text-xs text-gray-500'>{follow.name}</p>
@@ -364,7 +382,7 @@ const Account = ({ logout, getBriefDetails }) => {
               </ul>
               {following.length === 0 && <div className='flex flex-col items-center justify-center h-full my-8'>
                 <HiOutlineEmojiSad className='xl:text-[5rem] text-[4rem] border-gray-600 text-gray-600 border-4 py-4 rounded-full' />
-                <p className='text-black my-2'>You haven't follow any user yet</p>
+                <p className='text-black my-2'>You have not follow any user yet</p>
               </div>}
             </div>
           </div>
@@ -388,8 +406,10 @@ const Account = ({ logout, getBriefDetails }) => {
                   return <li key={follow.username}>
                     <div className="flex w-full items-center text-sm justify-between my-3.5" >
                       <Link href={`/users/${follow.username}`}>
-                        <a className='flex items-center space-x-2' onClick={() => { setFollowingModal(false) }}>
-                          <img src={follow.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" />
+                        <a className='flex items-center space-x-2' onClick={() => { setFollowerModal(false) }}>
+                          <Image src={follow.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                            return `${src}?w=${width}&q=${quality || 75}`
+                          }} height={35} width={35} />
                           <div className='cursor-pointer'>
                             <p className='text-sm'>{follow.username}</p>
                             <p className='text-xs text-gray-500'>{follow.name}</p>
@@ -405,7 +425,7 @@ const Account = ({ logout, getBriefDetails }) => {
 
               {followers.length === 0 && <div className='flex flex-col items-center justify-center h-full my-8'>
                 <HiOutlineEmojiSad className='xl:text-[5rem] text-[4rem] border-gray-600 text-gray-600 border-4 py-4 rounded-full' />
-                <p className='text-black my-2'>You haven't any follower</p>
+                <p className='text-black my-2'>You have not any follower</p>
               </div>}
             </div>
           </div>
@@ -484,7 +504,10 @@ const Account = ({ logout, getBriefDetails }) => {
                       <div className='flex flex-wrap justify-center'>
                         {imageList.map((image, index) => (
                           <div key={index} className="image-item m-2">
-                            <img src={image['data_url']} alt="selected image" className='w-24 h-24 border-[0.5px] border-gray-100 rounded-md' />
+                            <Image src={image['data_url']} alt="selected image" className='w-24 h-24 border-[0.5px] border-gray-100 rounded-md' loader={({ src, width, quality }) => {
+                              return `${src}?w=${width}&q=${quality || 75}`
+                            }
+                            } width={100} height={100} />
                             <div className="image-item__btn-wrapper">
                               <button onClick={() => onImageUpdate(index)} className='relative -top-24 -right-16 bg-white rounded-full'><MdChangeCircle /></button>
                               <button onClick={() => onImageRemove(index)} className='relative -top-24 -right-16 bg-white rounded-full'><AiFillCloseCircle /></button>
@@ -509,7 +532,7 @@ const Account = ({ logout, getBriefDetails }) => {
         <div className="modal-dialog relative pointer-events-none w-fit"  >
           <div className="modal-content border-none shadow-lg relative flex flex-col  pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current ">
             <div className="modal-body relative overflow-auto max-h-[40vh] flex justify-center items-center">
-              <img src="loader.gif" alt="" className='w-[300px]' />
+            <Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
             </div>
           </div>
         </div>
