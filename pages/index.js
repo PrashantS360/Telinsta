@@ -92,7 +92,7 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
                 </Link>
                 <div className="share flex space-x-1">
                   <Script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v14.0&appId=380635880678112&autoLogAppEvents=1" nonce="Ibcr2JKL"></Script>
-                  <div className='px-3 py-1.5 hidden sm:flex text-white bg-blue-600 text-xs rounded-md' data-href={url} data-layout="button" data-size="large"><a target="_blank" href={`https://www.facebook.com/sharer/sharer.php?u=${url}&amp;src=sdkpreparse`} className="fb-xfbml-parse-ignore"><BsFacebook className='text-base' /></a></div>
+                  <div className='px-3 py-1.5 hidden sm:flex text-white bg-blue-600 text-xs rounded-md' data-href={url} data-layout="button" data-size="large"><a target="_blank" rel="noreferrer" href={`https://www.facebook.com/sharer/sharer.php?u=${url}&amp;src=sdkpreparse`} className="fb-xfbml-parse-ignore"><BsFacebook className='text-base' /></a></div>
 
                   <Link href={`https://t.me/share/url?url=${url}`} ><a className='px-3 py-1.5 text-white bg-blue-500 text-xs rounded-md sm:flex hidden' target='_blank'><FaTelegramPlane className='text-base' /></a></Link>
                   <button onClick={() => { copyToClipboard(url) }} className={`px-3 text-white ${copied === true ? 'bg-green-600' : 'bg-red-600'} text-xs rounded-md flex py-1.5`}>{!copied && <MdOutlineContentCopy className='text-base' />} {copied && <BsCheckLg className='text-base' />}</button>
@@ -115,7 +115,7 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
                   </Link>
                 </div>
                 <div className="flex space-x-1">
-                  <div className='px-3 py-1.5 flex sm:hidden text-white bg-blue-600 text-xs rounded-md' data-href={url} data-layout="button" data-size="large"><a target="_blank" href={`https://www.facebook.com/sharer/sharer.php?u=${url}&amp;src=sdkpreparse`} className="fb-xfbml-parse-ignore"><BsFacebook className='text-base' /></a></div>
+                  <div className='px-3 py-1.5 flex sm:hidden text-white bg-blue-600 text-xs rounded-md' data-href={url} data-layout="button" data-size="large"><a target="_blank" rel="noreferrer" href={`https://www.facebook.com/sharer/sharer.php?u=${url}&amp;src=sdkpreparse`} className="fb-xfbml-parse-ignore"><BsFacebook className='text-base' /></a></div>
                   <Link href={`https://t.me/share/url?url=${url}`} ><a className='px-3 py-1.5 text-white bg-blue-500 text-xs rounded-md sm:hidden flex' target='_blank'><FaTelegramPlane className='text-base' /></a></Link>
                 </div>
               </div>
