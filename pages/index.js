@@ -16,9 +16,9 @@ import { useRouter } from 'next/router';
 
 const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
   const [suggestions, setSuggestions] = useState([]);
-  const router= useRouter();
+  const router = useRouter();
   useEffect(() => {
-    if(!localStorage.getItem('token')){
+    if (!localStorage.getItem('token')) {
       router.push('/login')
     }
     getSuggestions();
@@ -137,30 +137,34 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
         </div>
         <div className="suggestions px-4 py-3 left-[64%] top-24 fixed hidden sm:block w-1/3">
           <div className="flex max-w-[360px] border-b-2 pb-3 items-center text-sm justify-between mb-3">
-            <div className='flex items-center space-x-2'>
-              <Image src={user.profilepic?user.profilepic:"/user.png"} className="w-14 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
-                      return `${src}?w=${width}&q=${quality || 75}`
-                    }} height={45} width={45}/>
-              <div>
-                <p className='text-sm'>{user.username}</p>
-                <p className='text-xs text-gray-600'>{user.name}</p>
-              </div>
-            </div>
+            <Link href={'/account'}>
+              <a className='flex items-center space-x-2'>
+                <Image src={user.profilepic ? user.profilepic : "/user.png"} className="w-14 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                  return `${src}?w=${width}&q=${quality || 75}`
+                }} height={45} width={45} />
+                <div>
+                  <p className='text-sm'>{user.username}</p>
+                  <p className='text-xs text-gray-600'>{user.name}</p>
+                </div>
+              </a>
+            </Link>
             {user.username.length !== 0 && <button className='text-xs rounded-md text-blue-500 py-1.5 px-3 hover:text-white hover:bg-blue-500' onClick={logout}>logout</button>}
           </div>
 
           <h2 className='font-semibold mt-5 mb-2'>Suggestions for you...</h2>
           {suggestions.map((item) => {
             return <div className="flex max-w-[360px] items-center text-sm justify-between my-3.5" key={item.username}>
-              <div className='flex items-center space-x-2'>
-                <Image src={item.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
-                      return `${src}?w=${width}&q=${quality || 75}`
-                    }} height={40} width={40}/>
-                <div>
-                  <p className='text-sm'>{item.name}</p>
-                  <p className='text-xs text-gray-500'>{item.username}</p>
-                </div>
-              </div>
+              <Link href={`/users/${item.username}`}>
+                <a className='flex items-center space-x-2'>
+                  <Image src={item.profilepic} className="w-10 cursor-pointer rounded-full object-center" alt="" loader={({ src, width, quality }) => {
+                    return `${src}?w=${width}&q=${quality || 75}`
+                  }} height={40} width={40} />
+                  <div>
+                    <p className='text-sm'>{item.name}</p>
+                    <p className='text-xs text-gray-500'>{item.username}</p>
+                  </div>
+                </a>
+              </Link>
               <Link href={`/users/${item.username}`}><a className='text-xs rounded-md text-blue-500 py-1.5 px-3 hover:text-white hover:bg-blue-500'><BsArrow90DegRight /></a></Link>
             </div>
           })}

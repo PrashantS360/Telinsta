@@ -32,9 +32,9 @@ const Slider = ({ images }) => {
       <div className="slideshow-container relative mr-5 my-2 flex items-center w-full h-[52vh]">
         <div className='flex justify-center items-center w-full py-3 px-4'>
           <span className='text-sm absolute right-5 top-2 font-semibold'>{slideIndex + 1}/{images.length}</span>
-          <div className=''>
+          <div className='relative h-[50vh] w-full'>
             {/* <img src={imgLink} alt="" className='max-h-[50vh] px-2 py-2' /> */}
-            <Image src={imgLink.length > 0 ? imgLink : "/user.png"} alt={(slideIndex + 1) + "/" + images.length} className='max-h-[50vh]' loader={({ src, width, quality }) => { return `${src}?w=${width}&q=${quality || 75}` }} layout="fill" objectFit="contain" />
+            <Image src={imgLink.length > 0 ? imgLink : "/user.png"} alt={(slideIndex + 1) + "/" + images.length} loader={({ src, width, quality }) => { return `${src}?w=${width}&q=${quality || 75}` }} layout="fill" objectFit="contain" priority={true}/>
           </div>
         </div>
 
