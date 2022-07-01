@@ -77,13 +77,13 @@ const Post = ({ user }) => {
 
 
   return (
-    <div className='sm:mt-20 mt-28 w-[80%] m-auto min-h-screen'>
+    <div className='sm:mt-24 mt-44 w-[80%] m-auto min-h-screen'>
       <Head>
         <title>Telinsta | Add Post</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <main>
-        <header className='text-center my-2 mb-8'>
+        <header className='text-center mb-8'>
           <h2 className='text-2xl font-semibold'>Add New Post</h2>
           <p className='text-sm mt-2'>You can select images to post it. You can select upto five images. Images can be uploaded by drap & drop or by selection.</p>
         </header>

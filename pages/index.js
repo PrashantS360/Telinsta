@@ -16,6 +16,8 @@ import { useRouter } from 'next/router';
 
 const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
   const [suggestions, setSuggestions] = useState([]);
+
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
     if (!localStorage.getItem('token')) {
@@ -55,6 +57,7 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
   }
 
   const getSuggestions = async () => {
+    setLoading(true);
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/user/suggestions`, {
       method: 'POST',
       headers: {
@@ -64,10 +67,11 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
     })
     const response = await res.json();
     setSuggestions(response.suggestions);
+    setLoading(false);
   }
 
   return (
-    <div className="max-w-[1800px] m-auto sm:my-16 my-20">
+    <div className="max-w-[1800px] m-auto sm:mt-16 mt-36">
       <Head>
         <title>Telinsta</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -169,8 +173,13 @@ const Home = ({ posts, user, likePost, savePost, logout, getBriefDetails }) => {
             </div>
           })}
           {suggestions.length === 0 && <div className='flex flex-col items-center justify-center my-8'>
-            <FcSearch className='xl:text-[5rem] text-[4rem] border-blue-800 text-blue-600 border-4 py-4 rounded-full' />
-            <p className='my-2 text-sm px-8 italic text-gray-600'>We failed to found user which matches your profile and not followed by you.</p>
+            {loading ? <Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
+              :
+              <div>
+                <FcSearch className='xl:text-[5rem] text-[4rem] border-blue-800 text-blue-600 border-4 py-4 rounded-full' />
+                <p className='my-2 text-sm px-8 italic text-gray-600'>We failed to found user which matches your profile and not followed by you.</p>
+              </div>}
+
           </div>}
 
         </div>

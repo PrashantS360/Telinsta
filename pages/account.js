@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import {useRouter} from 'next/router';
 
 const Account = ({ logout, getBriefDetails }) => {
+  const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [user, setUser] = useState({ name: "", email: "", phone: "", bio: "", username: "", followers: [], following: [], profilepic: "" });
 
@@ -60,7 +61,7 @@ const Account = ({ logout, getBriefDetails }) => {
       setLoader(false);
       if (response.success) {
         getUser();
-        toast.success('You have posted successfully!', {
+        toast.success('Your profile picture has been updated!', {
           position: "top-left",
           autoClose: 1000,
           hideProgressBar: false,
@@ -72,7 +73,7 @@ const Account = ({ logout, getBriefDetails }) => {
         setImages([]);
       }
       else {
-        toast.error("Sorry! Can't post. Some error occurred at our side", {
+        toast.error("Sorry! Can't update. Some error occurred at our side", {
           position: "top-left",
           autoClose: 1000,
           hideProgressBar: false,
@@ -116,6 +117,7 @@ const Account = ({ logout, getBriefDetails }) => {
   }
 
   const getPosts = async () => {
+    setLoading(true);
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/post/getuserpost`, {
       method: 'POST',
       headers: {
@@ -125,6 +127,7 @@ const Account = ({ logout, getBriefDetails }) => {
     })
     const response = await res.json();
     setPosts(response.posts);
+    setLoading(false);
   }
 
   const [followingModal, setFollowingModal] = useState(false);
@@ -282,7 +285,7 @@ const Account = ({ logout, getBriefDetails }) => {
   }
 
   return (
-    <div className="max-w-[1800px] m-auto my-24 sm:my-12">
+    <div className="max-w-[1800px] m-auto my-36 sm:my-12">
       <Head>
         <title>Telinsta | My Account</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -295,7 +298,7 @@ const Account = ({ logout, getBriefDetails }) => {
             }} height={140} width={140} />
           </div>
           <div className="sm:w-[60%] w-full flex sm:block flex-col items-center">
-            <h2 className="username flex items-center mb-2"><span className=' text-2xl font-semibold'>{user.username}</span><button className='mx-2 text-black py-1 px-3 hover:text-white hover:bg-gray-700 border-2 border-black rounded-md text-sm sm:block hidden' onClick={() => { setEditDetails(true) }}>Edit Profile</button><FaEdit className='mx-2 sm:hidden ' /> </h2>
+            <h2 className="username flex items-center mb-2"><span className=' text-2xl font-semibold'>{user.username}</span><button className='mx-2 text-black py-1 px-3 hover:text-white hover:bg-gray-700 border-2 border-black rounded-md text-sm sm:block hidden' onClick={() => { setEditDetails(true) }}>Edit Profile</button><FaEdit className='mx-2 sm:hidden' onClick={() => { setEditDetails(true) }}/> </h2>
             <div className="flex flex-col">
               <div className="flex">
                 <div className='sm:hidden mr-2'>
@@ -333,9 +336,13 @@ const Account = ({ logout, getBriefDetails }) => {
             })}
           </div>}
           {posts.length === 0 && <div className='flex flex-col items-center justify-center h-full my-8'>
+            {loading?<Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
+            :
+            <div>
             <BsHeartFill className='xl:text-[5rem] text-[4rem] border-red-600 text-red-600 border-4 py-4 rounded-full' />
             <h3 className='text-black text-xl font-semibold mt-1 mb-2'>You have not posted anything yet.</h3>
             <Link href='/post'><a className='text-gray-700 hover:underline hover:text-blue-700 text-sm'>Click here to make your first post</a></Link>
+            </div>}
           </div>}
 
           <div className="text-center my-3 mt-5">

@@ -64,7 +64,7 @@ const Getpost = ({ post, user, likePost, savePost, getBriefDetails }) => {
     }
 
     return (
-        <div className="max-w-[1800px] m-auto my-24 sm:my-12">
+        <div className="max-w-[1800px] m-auto my-36 sm:my-14">
             <Head>
                 <title>Telinsta | A post By {post.username}</title>
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />

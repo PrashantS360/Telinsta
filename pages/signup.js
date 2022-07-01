@@ -71,7 +71,7 @@ const Signup = () => {
         <title>Telinsta | SignUp</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <div className="min-h-full flex flex-col lg:flex-row items-center justify-center py-12 px-4 sm:px-6 lg:px-8 md:mt-16 mt-24 space-x-2 space-y-2 h-full">
+      <div className="min-h-full flex flex-col lg:flex-row items-center justify-center py-12 px-4 sm:px-6 lg:px-8 md:mt-11 mt-20 space-x-2 space-y-2 h-full">
         <Image src="/login.jpg" alt="" width={600} height={520} />
         <div className="max-w-md w-full space-y-8 p-8 border-2">
           <div>

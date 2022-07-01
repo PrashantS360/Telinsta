@@ -15,6 +15,8 @@ let socket;
 const Chat = ({ user, getBriefDetails }) => {
   let router = useRouter();
 
+  const [loading, setLoading] = useState(false);
+
   socket = io()
   const [chats, setChats] = useState([]);
   const [input, setInput] = useState('');
@@ -54,6 +56,7 @@ const Chat = ({ user, getBriefDetails }) => {
   }
 
   const getChats = async () => {
+    setLoading(true);
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/chat/getchats`, {
       method: 'POST',
       headers: {
@@ -81,6 +84,7 @@ const Chat = ({ user, getBriefDetails }) => {
         chat.username = obj.username;
       }
       setChats(response);
+      setLoading(false);
     }
   }
 
@@ -147,7 +151,7 @@ const Chat = ({ user, getBriefDetails }) => {
   }
 
   return (
-    <div className="max-w-[1800px] m-auto sm:mt-[4.5rem] mt-24">
+    <div className="max-w-[1800px] m-auto sm:mt-[4.5rem] mt-40">
       <Head>
         <title>Telinsta | Chat</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -173,9 +177,14 @@ const Chat = ({ user, getBriefDetails }) => {
               </div>
             })}
             {chats.length === 0 && <div className='flex flex-col items-center justify-center my-8'>
+              {loading?<Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
+              :
+              <div>
               <FcSearch className='xl:text-[5rem] text-[4rem] border-blue-800 text-blue-600 border-4 py-4 rounded-full' />
               <p className='my-2 text-sm px-5 italic text-gray-600'>Find an user to start conversation that will appear here.</p>
+              </div>}
             </div>}
+            
           </div>
 
         </div>

@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import { useRouter } from 'next/router'
 
 const Profile = ({ getBriefDetails }) => {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { username } = router.query;
   const [user, setUser] = useState({ name: "", bio: "", username: "", followers: [], following: [], profilepic: "" });
@@ -32,11 +33,11 @@ const Profile = ({ getBriefDetails }) => {
   useEffect(() => {
     getPosts();
   }, [user])
-  
+
   useEffect(() => {
     checkFollowing();
-  }, [user,loggedUser])
-  
+  }, [user, loggedUser])
+
 
   const checkFollowing = () => {
     // Checking whether this user is followed by loggedUser or not
@@ -89,6 +90,7 @@ const Profile = ({ getBriefDetails }) => {
   }
 
   const getPosts = async () => {
+    setLoading(true);
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/post/getuserpost`, {
       method: 'POST',
       headers: {
@@ -100,6 +102,7 @@ const Profile = ({ getBriefDetails }) => {
     if (response.success) {
       setPosts(response.posts);
     }
+    setLoading(false);
   }
 
   const followUser = async () => {
@@ -195,7 +198,7 @@ const Profile = ({ getBriefDetails }) => {
   }
 
   return (
-    <div className="max-w-[1800px] m-auto my-24 sm:my-12">
+    <div className="max-w-[1800px] m-auto my-36 sm:my-12">
       <Head>
         <title>Telinsta | {user.username}</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -250,8 +253,12 @@ const Profile = ({ getBriefDetails }) => {
             })}
           </div>}
           {posts.length === 0 && <div className='flex flex-col items-center justify-center h-full my-8'>
-            <BsHeartFill className='xl:text-[5rem] text-[4rem] border-red-600 text-red-600 border-4 py-4 rounded-full' />
-            <h3 className='text-black text-xl font-semibold mt-1 mb-2'>User has not posted anything yet.</h3>
+            {loading ? <Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
+              :
+              <div>
+                <BsHeartFill className='xl:text-[5rem] text-[4rem] border-red-600 text-red-600 border-4 py-4 rounded-full' />
+                <h3 className='text-black text-xl font-semibold mt-1 mb-2'>User has not posted anything yet.</h3>
+              </div>}
           </div>}
 
           <div className="text-center my-3 mt-5">
