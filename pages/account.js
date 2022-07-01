@@ -338,7 +338,7 @@ const Account = ({ logout, getBriefDetails }) => {
           {posts.length === 0 && <div className='flex flex-col items-center justify-center h-full my-8'>
             {loading?<Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
             :
-            <div>
+            <div className='flex flex-col items-center justify-center'>
             <BsHeartFill className='xl:text-[5rem] text-[4rem] border-red-600 text-red-600 border-4 py-4 rounded-full' />
             <h3 className='text-black text-xl font-semibold mt-1 mb-2'>You have not posted anything yet.</h3>
             <Link href='/post'><a className='text-gray-700 hover:underline hover:text-blue-700 text-sm'>Click here to make your first post</a></Link>

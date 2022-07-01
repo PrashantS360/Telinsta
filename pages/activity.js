@@ -80,7 +80,7 @@ const Activity = ({ user }) => {
         {posts.length === 0 && <div className='flex flex-col items-center justify-center h-full'>
           {loading ? <Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
             :
-            <div>
+            <div className='flex flex-col items-center justify-center'>
               <BsHeartFill className='xl:text-[5rem] text-[4rem] border-red-600 text-red-600 border-4 py-4 rounded-full' />
               <h1 className='text-black text-2xl font-semibold mt-1 mb-2'>Liked content will appear here.</h1>
               <p className='text-gray-800'>It looks like you liked nothing yet.</p>

@@ -179,7 +179,7 @@ const Chat = ({ user, getBriefDetails }) => {
             {chats.length === 0 && <div className='flex flex-col items-center justify-center my-8'>
               {loading?<Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
               :
-              <div>
+              <div className='flex flex-col items-center justify-center'>
               <FcSearch className='xl:text-[5rem] text-[4rem] border-blue-800 text-blue-600 border-4 py-4 rounded-full' />
               <p className='my-2 text-sm px-5 italic text-gray-600'>Find an user to start conversation that will appear here.</p>
               </div>}
