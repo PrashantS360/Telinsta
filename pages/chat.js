@@ -93,9 +93,9 @@ const Chat = ({ user, getBriefDetails }) => {
   const joinRoom = (room, message) => {
     if (room !== "") {
       socket.emit('join_room', room);
-
       socket.on('receive_message', ({ data, room }) => {
-        if (data.sender !== user.username && data.receiver === selectedChat.username) {
+        // console.log("message received",data,room)
+        if (data.sender !== user.username) {
           let msg = message;
           msg.push(data);
           setMessages(msg);
@@ -150,6 +150,12 @@ const Chat = ({ user, getBriefDetails }) => {
       setMessages(response.messages);
       joinRoom(response.room, response.messages);
     }
+  }
+
+  const timestamp = (time) => {
+    time = new Date(time);
+    time = time.toTimeString().split(':')
+    return time[0]+":"+time[1];
   }
 
   return (
@@ -212,7 +218,10 @@ const Chat = ({ user, getBriefDetails }) => {
               <ul className='' key={key}>
                 {
                   messages.map((msg) => {
-                    return <li key={Math.random()} className={`flex ${msg.sender === user.username ? 'justify-end ml-20 sm:ml-36 lg:ml-56' : 'justify-start mr-20 lg:mr-56 sm:mr-36'} m-1`}> <span className={`text-bold text-black ${msg.sender === user.username ? 'float-right bg-blue-600' : 'float-left bg-gray-600'} text-white px-3 py-1 rounded-md`}>{msg.msg}</span></li>
+                    return <li key={Math.random()} className={`flex items-end ${msg.sender === user.username ? 'justify-end ml-20 sm:ml-36 lg:ml-56' : 'justify-start mr-20 lg:mr-56 sm:mr-36'} m-1`}>
+                      <span className={`text-bold text-black ${msg.sender === user.username ? 'float-right bg-blue-600' : 'float-left bg-gray-600'} text-white px-3 py-1 rounded-md`}>{msg.msg}</span>
+                      <span className='text-[0.5rem] pl-0.5 pb-0.5 text-gray-600 underline'>{timestamp(msg.time)}</span>
+                    </li>
                   })
                 }
                 <li id={"62af4fbc5f6c6e4cbb594530035495bbc4e6c6f5cbf4fa26"}></li>
