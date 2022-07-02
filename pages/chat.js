@@ -17,7 +17,8 @@ const Chat = ({ user, getBriefDetails }) => {
 
   const [loading, setLoading] = useState(false);
 
-  socket = io(process.env.NEXT_PUBLIC_HOST)
+  socket = io(process.env.NEXT_PUBLIC_HOST);
+
   const [chats, setChats] = useState([]);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -26,10 +27,10 @@ const Chat = ({ user, getBriefDetails }) => {
   const [room, setRoom] = useState("");
 
   useEffect(() => {
-    if (!localStorage.getItem('token')){
+    if (!localStorage.getItem('token')) {
       router.push('/login');
     }
-    else{
+    else {
       socketInitializer();
     }
     // eslint-disable-next-line
@@ -48,7 +49,7 @@ const Chat = ({ user, getBriefDetails }) => {
 
   const socketInitializer = async () => {
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/chat/socket`);
-    socket = io()
+    socket = io(process.env.NEXT_PUBLIC_HOST);
 
     socket.on('connect', () => {
       console.log('connected')
@@ -177,14 +178,14 @@ const Chat = ({ user, getBriefDetails }) => {
               </div>
             })}
             {chats.length === 0 && <div className='flex flex-col items-center justify-center my-8'>
-              {loading?<Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
-              :
-              <div className='flex flex-col items-center justify-center'>
-              <FcSearch className='xl:text-[5rem] text-[4rem] border-blue-800 text-blue-600 border-4 py-4 rounded-full' />
-              <p className='my-2 text-sm px-5 italic text-gray-600'>Find an user to start conversation that will appear here.</p>
-              </div>}
+              {loading ? <Image src="/loader.gif" alt="" width={300} height={200} className='w-[300px]' />
+                :
+                <div className='flex flex-col items-center justify-center'>
+                  <FcSearch className='xl:text-[5rem] text-[4rem] border-blue-800 text-blue-600 border-4 py-4 rounded-full' />
+                  <p className='my-2 text-sm px-5 italic text-gray-600'>Find an user to start conversation that will appear here.</p>
+                </div>}
             </div>}
-            
+
           </div>
 
         </div>
