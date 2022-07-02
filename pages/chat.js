@@ -17,7 +17,7 @@ const Chat = ({ user, getBriefDetails }) => {
 
   const [loading, setLoading] = useState(false);
 
-  socket = io(process.env.NEXT_PUBLIC_HOST);
+  socket = io(process.env.NEXT_PUBLIC_HOST+'/chat');
 
   const [chats, setChats] = useState([]);
   const [input, setInput] = useState('');
@@ -49,7 +49,7 @@ const Chat = ({ user, getBriefDetails }) => {
 
   const socketInitializer = async () => {
     let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/chat/socket`);
-    socket = io(process.env.NEXT_PUBLIC_HOST);
+    socket = io(process.env.NEXT_PUBLIC_HOST+'/chat');
 
     socket.on('connect', () => {
       console.log('connected')
