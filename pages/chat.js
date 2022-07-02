@@ -17,7 +17,7 @@ const Chat = ({ user, getBriefDetails }) => {
 
   const [loading, setLoading] = useState(false);
 
-  socket = io()
+  socket = io(process.env.NEXT_PUBLIC_HOST)
   const [chats, setChats] = useState([]);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
