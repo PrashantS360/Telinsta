@@ -43,9 +43,6 @@ const Signup = () => {
         e.target.value = e.target.value.toLowerCase();
         e.target.value = e.target.value.replace(/\s/g, '');
       }
-      else if (e.target.name == 'name') {
-        e.target.value = e.target.value.trim();
-      }
       setCredentials({ ...credentials, [e.target.name]: e.target.value })
     }
   }
