@@ -71,6 +71,7 @@ const Account = ({ logout, getBriefDetails }) => {
           progress: undefined,
         });
         setImages([]);
+        setProfilePic(false);
       }
       else {
         toast.error("Sorry! Can't update. Some error occurred at our side", {

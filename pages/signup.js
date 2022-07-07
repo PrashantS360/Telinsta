@@ -7,7 +7,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { FaRegWindowClose } from 'react-icons/fa';
 import firebase from './api/firebase';
-import { RecaptchaVerifier, signInWithPhoneNumber, getAuth} from "firebase/auth";
+import { RecaptchaVerifier, signInWithPhoneNumber, getAuth } from "firebase/auth";
 
 const Signup = () => {
 
@@ -28,6 +28,24 @@ const Signup = () => {
       setPhoneOTP(e.target.value);
     }
     else {
+      if (e.target.name == 'username') {
+        if (e.target.value.includes(' ')) {
+          toast.warn('No space & capital letters allowed in username!', {
+            position: "top-left",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+        }
+        e.target.value = e.target.value.toLowerCase();
+        e.target.value = e.target.value.replace(/\s/g, '');
+      }
+      else if (e.target.name == 'name') {
+        e.target.value = e.target.value.trim();
+      }
       setCredentials({ ...credentials, [e.target.name]: e.target.value })
     }
   }
@@ -35,9 +53,12 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formBody = credentials;
-    credentials.username = credentials.username.toLowerCase();
-    if (phoneVerified) {
+    formBody.username = formBody.username.toLowerCase();
+    formBody.name = formBody.name.trim();
+    formBody.username = formBody.username.replace(/\s/g, '');
+    setCredentials(formBody);
 
+    if (phoneVerified) {
       let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup`, {
         method: 'POST',
         headers: {
@@ -61,6 +82,7 @@ const Signup = () => {
         setTimeout(() => {
           router.push('/');
         }, 1000);
+        setCredentials({ name: "", email: "", password: "", username: "", phone: "" });
       }
       else {
         toast.error(response.error, {
@@ -73,7 +95,6 @@ const Signup = () => {
           progress: undefined,
         });
       }
-      setCredentials({ name: "", email: "", password: "", username: "", phone: "" });
     }
     else {
       toast.warn('Please verify your phone number first!', {
@@ -94,7 +115,7 @@ const Signup = () => {
     window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
       'size': 'invisible',
       'callback': (response) => {
-        console.log('captcha resolved', response);
+        console.log('captcha resolved');
         verifyPhoneNumber();
         // reCAPTCHA solved, allow signInWithPhoneNumber.
         // ...
@@ -145,7 +166,6 @@ const Signup = () => {
     const code = phoneOTP;
     confirmationResult.confirm(code).then((result) => {
       const user = result.user;
-      console.log(user);
       setPhoneVerified(true);
       toast.success('Phone number is verified successfully!', {
         position: "top-left",
@@ -172,7 +192,7 @@ const Signup = () => {
     });
   }
 
-  
+
 
   return (
     <div className=''>
