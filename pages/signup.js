@@ -5,6 +5,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Head from 'next/head'
 import Image from 'next/image'
+import { FaRegWindowClose } from 'react-icons/fa';
+import firebase from './api/firebase';
+import { RecaptchaVerifier, signInWithPhoneNumber, getAuth} from "firebase/auth";
 
 const Signup = () => {
 
@@ -17,41 +20,63 @@ const Signup = () => {
 
   const [credentials, setCredentials] = useState({ name: "", email: "", password: "", username: "", phone: "" })
 
+  const [enterOTP, setEnterOTP] = useState(false);
+  const [phoneOTP, setPhoneOTP] = useState("");
   const router = useRouter();
   const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value })
+    if (e.target.name === "phoneotp") {
+      setPhoneOTP(e.target.value);
+    }
+    else {
+      setCredentials({ ...credentials, [e.target.name]: e.target.value })
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formBody = credentials;
     credentials.username = credentials.username.toLowerCase();
-    let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formBody)
-    })
+    if (phoneVerified) {
 
-    const response = await res.json();
-    if (response.success) {
-      localStorage.setItem('token', response.token);
-      toast.success('Your account has been created!', {
-        position: "top-left",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      setTimeout(() => {
-        router.push('/');
-      }, 1000);
+      let res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/user/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formBody)
+      })
+
+      const response = await res.json();
+      if (response.success) {
+        localStorage.setItem('token', response.token);
+        toast.success('Your account has been created!', {
+          position: "top-left",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+        setTimeout(() => {
+          router.push('/');
+        }, 1000);
+      }
+      else {
+        toast.error(response.error, {
+          position: "top-left",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
+      }
+      setCredentials({ name: "", email: "", password: "", username: "", phone: "" });
     }
     else {
-      toast.error(response.error, {
+      toast.warn('Please verify your phone number first!', {
         position: "top-left",
         autoClose: 1000,
         hideProgressBar: false,
@@ -61,8 +86,93 @@ const Signup = () => {
         progress: undefined,
       });
     }
-    setCredentials({ name: "", email: "", password: "", username: "", phone: "" });
   }
+
+
+  const verfiyRecaptcha = () => {
+    const auth = getAuth();
+    window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+      'size': 'invisible',
+      'callback': (response) => {
+        console.log('captcha resolved', response);
+        verifyPhoneNumber();
+        // reCAPTCHA solved, allow signInWithPhoneNumber.
+        // ...
+      },
+      'expired-callback': () => {
+        // Response expired. Ask user to solve reCAPTCHA again.
+        // ...
+      },
+      defaultCountry: "IN"
+    }, auth);
+  }
+
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const verifyPhoneNumber = () => {
+    const auth = getAuth();
+    const phoneNumber = credentials.phone;
+    verfiyRecaptcha();
+    const appVerifier = window.recaptchaVerifier;
+
+    signInWithPhoneNumber(auth, phoneNumber, appVerifier).then((confirmationResult) => {
+      window.confirmationResult = confirmationResult;
+      setEnterOTP(true);
+      toast.success(`OTP sent to ${phoneNumber}`, {
+        position: "top-left",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }).catch((error) => {
+      console.log("OTP not sent", error);
+      // toast.error(`OTP not sent. Please try after some time`, {
+      //   position: "top-left",
+      //   autoClose: 1000,
+      //   hideProgressBar: false,
+      //   closeOnClick: true,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      // });
+    });
+  }
+
+  const verifyOTP = (e) => {
+    e.preventDefault();
+    const code = phoneOTP;
+    confirmationResult.confirm(code).then((result) => {
+      const user = result.user;
+      console.log(user);
+      setPhoneVerified(true);
+      toast.success('Phone number is verified successfully!', {
+        position: "top-left",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      setEnterOTP(false);
+    }).catch((error) => {
+      setPhoneVerified(false);
+      console.log(error);
+      toast.error('You have entered wrong OTP!', {
+        position: "top-left",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    });
+  }
+
+  
 
   return (
     <div className=''>
@@ -83,6 +193,7 @@ const Signup = () => {
           </div>
           <form onSubmit={handleSubmit} className="mt-8 space-y-6" method="POST">
             <input type="hidden" name="remember" value="true" />
+            <div id="recaptcha-container"></div>
             <div className="rounded-md shadow-sm space-y-2">
               <div>
                 <label htmlFor="name" className="sr-only">Name</label>
@@ -96,9 +207,10 @@ const Signup = () => {
                 <label htmlFor="email-address" className="sr-only">Email address</label>
                 <input onChange={handleChange} id="email" name="email" type="email" value={credentials.email} autoComplete="email" required className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Email address" />
               </div>
-              <div>
+              <div className='flex'>
                 <label htmlFor="email-address" className="sr-only">Phone</label>
-                <input onChange={handleChange} id="phone" name="phone" type="tel" value={credentials.phone} autoComplete="phone" required className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Phone Number" />
+                <input onChange={handleChange} id="phone" name="phone" type="tel" value={credentials.phone} autoComplete="phone" required className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-l-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm" placeholder="Phone Number with country code" />
+                {credentials.phone.length > 11 && <span onClick={verifyPhoneNumber} className='text-green-500 appearance-none relative block w-1/4 px-2 py-3 border border-gray-300 rounded-r-md text-sm bg-slate-100 font-semibold cursor-pointer'>Get OTP</span>}
               </div>
               <div>
                 <label htmlFor="password" className="sr-only">Password</label>
@@ -133,6 +245,32 @@ const Signup = () => {
         </div>
       </div>
 
+
+
+
+
+
+
+      <div className={`modal ${!enterOTP ? 'hidden' : 'flex'} z-30 fixed top-0 left-0 w-full h-full outline-none overflow-x-hidden justify-center items-center overflow-y-auto bg-[rgba(0,0,0,0.4)] `}>
+        <div className="modal-dialog relative pointer-events-none w-fit sm:min-w-[500px] max-w-[800px] h-[60vh]"  >
+          <div className="modal-content border-none shadow-lg relative flex flex-col  pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current ">
+            <div className="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+              <h5 className="text-xl font-medium leading-normal text-gray-800 text-center w-full">
+                Phone Number Verification
+              </h5>
+              <button type="button"
+                className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                onClick={() => { setEnterOTP(false) }}><FaRegWindowClose /></button>
+            </div>
+            <div className="modal-body my-2 relative p-4 overflow-auto max-h-[50vh]">
+              <form onSubmit={verifyOTP} className='flex'>
+                <input type="text" name="phoneotp" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-b-2 border-gray-100 appearance-none  dark:border-gray-400 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder="Enter OTP" required value={phoneOTP} onChange={handleChange} />
+                <button type="submit" className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Verify</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
